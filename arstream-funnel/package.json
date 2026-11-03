@@ -1,0 +1,14 @@
+{
+  "name": "arstream-funnel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Adaptive Google/YouTube ad landing page that drives follows to the Arstream artist page",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
