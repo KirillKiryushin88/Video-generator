@@ -1,11 +1,14 @@
-// POST /api/event  { arm, type, gclid?, wbraid?, gbraid?, platform? }
+// POST /api/event  { arm, type, src?, platform?, gclid?, wbraid?, gbraid? }
 // Updates bandit stats and keeps click IDs so verified follows can later be
 // uploaded to Google Ads as offline conversions.
 import { getStore } from "@netlify/blobs";
-import { ARM_ID, EVENT_VALUE, applyEvent } from "../../lib/bandit.mjs";
+import { ARM_ID, EVENT_VALUE, applyEvent, segmentOf } from "../../lib/bandit.mjs";
 
 const CLICK_ID = /^[A-Za-z0-9_-]{10,200}$/;
-const PLATFORMS = new Set(["audiomack", "spotify", "youtube", "apple", "other"]);
+const PLATFORMS = new Set([
+  "spotify", "youtube", "apple", "audiomack", "soundcloud",
+  "deezer", "amazon", "tidal", "ytmusic", "instagram", "site", "other",
+]);
 
 export default async (req) => {
   if (req.method !== "POST") return new Response(null, { status: 405 });
@@ -21,22 +24,30 @@ export default async (req) => {
   if (!ARM_ID.test(arm) || !(type in EVENT_VALUE)) {
     return Response.json({ error: "bad event" }, { status: 400 });
   }
+  const segment = segmentOf(body.src);
+  const platform = PLATFORMS.has(body.platform) ? body.platform : "other";
 
   const store = getStore("funnel");
   // Read-modify-write is not atomic; fine for MVP traffic levels. Move to a
   // database with atomic increments (e.g. Supabase) once traffic grows.
   const stats = (await store.get("stats", { type: "json" })) || {};
-  applyEvent(stats, arm, type);
+  applyEvent(stats, segment, arm, type);
   await store.setJSON("stats", stats);
 
-  if (type !== "view" && type !== "preview_15s") {
+  if (type.startsWith("follow")) {
+    // Per-platform click counts, for calibrating click -> real follow rates.
+    const day = new Date().toISOString().slice(0, 10);
+    const key = `daily/${day}`;
+    const daily = (await store.get(key, { type: "json" })) || {};
+    daily[platform] = (daily[platform] || 0) + 1;
+    await store.setJSON(key, daily);
+
     const clickId = ["gclid", "wbraid", "gbraid"].find((k) => CLICK_ID.test(body[k] || ""));
     if (clickId) {
-      const platform = PLATFORMS.has(body.platform) ? body.platform : "other";
-      const key = `clicks/${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}`;
-      await store.setJSON(key, {
+      await store.setJSON(`clicks/${day}/${crypto.randomUUID()}`, {
         [clickId]: body[clickId],
         arm,
+        segment,
         type,
         platform,
         at: new Date().toISOString(),

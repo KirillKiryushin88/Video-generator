@@ -1,8 +1,21 @@
-// Thompson sampling over landing-page variants.
-// Each arm keeps weighted successes (follow clicks, scored by quality) and views.
+// Thompson sampling over landing-page variants, learned separately per traffic
+// segment (YouTube viewers and Search users respond to different hooks).
 // Pure functions only, so the same code runs in the Netlify function and in tests.
 
 export const ARM_ID = /^[a-z0-9][a-z0-9_-]{0,31}$/;
+export const SEGMENTS = ["youtube", "search", "social", "other"];
+
+// How much a segment borrows from the pooled stats of all segments while its own
+// data is thin. 0.1 = ten pooled observations count like one local one.
+export const POOL_WEIGHT = 0.1;
+
+export function segmentOf(source) {
+  const s = String(source || "").toLowerCase();
+  if (/youtube|^yt|ytmusic/.test(s)) return "youtube";
+  if (/google|search|gads|adwords|bing/.test(s)) return "search";
+  if (/instagram|^ig$|facebook|^fb$|tiktok|meta/.test(s)) return "social";
+  return "other";
+}
 
 // Standard normal via Box-Muller.
 function randn(rng) {
@@ -39,17 +52,37 @@ export function sampleBeta(a, b, rng = Math.random) {
   return x / (x + y);
 }
 
-// stats: { [armId]: { views: number, score: number } }
+function clean(s) {
+  const views = Math.max(0, (s && s.views) || 0);
+  const score = Math.min(Math.max(0, (s && s.score) || 0), views);
+  return { views, score };
+}
+
+// Sum stats of one arm across all segments.
+export function pooled(stats, arm) {
+  let views = 0;
+  let score = 0;
+  for (const seg of Object.values(stats || {})) {
+    const s = clean(seg && seg[arm]);
+    views += s.views;
+    score += s.score;
+  }
+  return { views, score };
+}
+
+// stats: { [segment]: { [armId]: { views, score } } }
 // score is the sum of conversion values (0..1 each), so it never exceeds views.
-export function chooseArm(arms, stats = {}, rng = Math.random) {
+export function chooseArm(arms, stats = {}, segment = "other", rng = Math.random) {
   if (!arms.length) throw new Error("no arms");
+  const local = stats[segment] || {};
   let best = arms[0];
   let bestDraw = -1;
   for (const arm of arms) {
-    const s = stats[arm] || { views: 0, score: 0 };
-    const views = Math.max(0, s.views || 0);
-    const score = Math.min(Math.max(0, s.score || 0), views);
-    const draw = sampleBeta(1 + score, 1 + views - score, rng);
+    const own = clean(local[arm]);
+    const all = pooled(stats, arm);
+    const a = 1 + own.score + POOL_WEIGHT * (all.score - own.score);
+    const b = 1 + (own.views - own.score) + POOL_WEIGHT * (all.views - all.score - (own.views - own.score));
+    const draw = sampleBeta(a, b, rng);
     if (draw > bestDraw) {
       bestDraw = draw;
       best = arm;
@@ -67,14 +100,15 @@ export const EVENT_VALUE = {
   follow_verified: 1,
 };
 
-// Apply one event to stats. "view" bumps views; others add score, capped so
-// one visitor can contribute at most 1.0 (the client sends one best event).
-export function applyEvent(stats, arm, type) {
+// Apply one event. "view" bumps views; others add score, capped so the score
+// can never exceed views in a segment.
+export function applyEvent(stats, segment, arm, type) {
   if (!(type in EVENT_VALUE)) throw new Error(`unknown event ${type}`);
-  const s = stats[arm] || { views: 0, score: 0 };
+  if (!SEGMENTS.includes(segment)) throw new Error(`unknown segment ${segment}`);
+  const seg = (stats[segment] = stats[segment] || {});
+  const s = (seg[arm] = seg[arm] || { views: 0, score: 0 });
   if (type === "view") s.views += 1;
   else s.score = Math.min(s.views, s.score + EVENT_VALUE[type]);
-  stats[arm] = s;
   return stats;
 }
 

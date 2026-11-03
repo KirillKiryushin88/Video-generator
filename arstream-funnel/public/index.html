@@ -3,116 +3,138 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Arstream — Follow</title>
-<meta name="description" content="Dancehall & Patois from Arstream. Listen and follow.">
-<meta name="theme-color" content="#0d0c0a">
+<title>Arstream — Listen & Follow</title>
+<meta name="description" content="Original music. Animated worlds. Listen to Arstream and follow on your platform.">
+<meta name="theme-color" content="#1649d8">
 <link rel="preconnect" href="https://open.spotify.com">
+<link rel="preconnect" href="https://www.youtube-nocookie.com">
 <style>
   :root {
-    --bg: #0d0c0a;
-    --surface: #17150f;
-    --line: #2b2719;
-    --text: #f4efe2;
-    --muted: #b3ab95;
-    --accent: #ffcc1a;
-    --accent-ink: #1a1400;
-    --green: #2fbf71;
-    --radius: 16px;
+    --ink: #0a1440;
+    --blue: #1649d8;
+    --blue-soft: #2a5cf0;
+    --paper: #fff6ea;
+    --paper-dim: #c9d3f5;
+    --coral: #ff7b5c;
+    --coral-ink: #2a0c05;
+    --line: rgba(255, 246, 234, .18);
+    --surface: rgba(10, 20, 64, .55);
+    --radius: 18px;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  html { background: var(--ink); }
   body {
+    margin: 0; color: var(--paper); min-height: 100dvh;
     font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    min-height: 100dvh;
+    background:
+      radial-gradient(120% 60% at 50% 0%, var(--blue-soft) 0%, var(--blue) 35%, var(--ink) 80%) fixed;
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
-  main { max-width: 520px; margin: 0 auto; padding: 24px 16px 0; }
-  .hero { display: flex; gap: 16px; align-items: center; }
-  .avatar {
-    width: 84px; height: 84px; border-radius: 50%; object-fit: cover;
-    border: 2px solid var(--accent); flex: none; background: var(--surface);
+  main { max-width: 540px; margin: 0 auto; padding: 0 16px; }
+  .poster {
+    margin: 16px -16px 0; height: 180px; overflow: hidden; position: relative;
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+            mask-image: linear-gradient(to bottom, #000 55%, transparent);
   }
-  .name { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
-  .tag { color: var(--muted); margin: 0; font-size: 14px; }
+  .poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .brand { margin-top: 28px; position: relative; text-align: center; }
+  .poster.ok + .brand { margin-top: -56px; }
+  .brand img { height: 44px; width: auto; max-width: 70%; }
+  .brand .txt { font-size: 34px; font-weight: 900; letter-spacing: .12em; }
+  .tagline { text-align: center; color: var(--paper-dim); margin: 2px 0 0; font-size: 14px; }
   .kicker {
-    display: inline-block; margin: 28px 0 8px; padding: 4px 10px; border-radius: 999px;
-    background: var(--surface); border: 1px solid var(--line);
-    color: var(--accent); font-size: 13px; font-weight: 600;
+    display: table; margin: 24px auto 10px; padding: 4px 12px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface);
+    color: var(--coral); font-size: 13px; font-weight: 700;
   }
-  h1 { font-size: clamp(28px, 8vw, 40px); line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.02em; }
-  .sub { color: var(--muted); margin: 0 0 20px; }
+  h1 {
+    font-size: clamp(28px, 8vw, 40px); line-height: 1.08; margin: 0 0 10px;
+    letter-spacing: -0.02em; text-align: center; text-wrap: balance;
+  }
+  .sub { color: var(--paper-dim); margin: 0 0 20px; text-align: center; text-wrap: pretty; }
   .player {
     border-radius: var(--radius); overflow: hidden; background: var(--surface);
     border: 1px solid var(--line); min-height: 152px;
   }
-  .player iframe { display: block; width: 100%; border: 0; }
-  .hint { font-size: 13px; color: var(--muted); margin: 8px 2px 24px; }
+  .player.video { aspect-ratio: 16 / 9; min-height: 0; }
+  .player iframe { display: block; width: 100%; height: 100%; border: 0; }
+  .hint { font-size: 13px; color: var(--paper-dim); margin: 8px 2px 20px; text-align: center; }
   .ctas { display: grid; gap: 10px; }
   .cta {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    display: flex; align-items: center; justify-content: center;
     min-height: 56px; padding: 0 20px; border-radius: 999px;
-    font-weight: 700; font-size: 17px; text-decoration: none;
-    border: 1px solid var(--line); color: var(--text); background: var(--surface);
+    font-weight: 800; font-size: 17px; text-decoration: none;
+    border: 1px solid var(--line); color: var(--paper); background: var(--surface);
     transition: transform .08s ease;
   }
   .cta:active { transform: scale(.98); }
-  .cta.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  .cta:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
-  .proof { margin: 28px 0; padding: 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); font-size: 14px; color: var(--muted); }
-  .proof b { color: var(--text); }
+  .cta.primary { background: var(--coral); color: var(--coral-ink); border-color: var(--coral); }
+  .cta:focus-visible, .chip:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
+  .more { margin: 18px 0 0; text-align: center; }
+  .more p { margin: 0 0 8px; font-size: 13px; color: var(--paper-dim); }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .chip {
+    padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    border: 1px solid var(--line); color: var(--paper); text-decoration: none; background: var(--surface);
+  }
+  .about {
+    margin: 28px 0 0; padding: 16px; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--line); font-size: 14px; color: var(--paper-dim);
+  }
+  .about b { color: var(--paper); }
+  .about a { color: var(--paper); }
   .sticky {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    background: linear-gradient(to top, var(--ink) 65%, transparent);
     transform: translateY(110%); transition: transform .25s ease;
   }
   .sticky.show { transform: none; }
-  .sticky .cta { max-width: 520px; margin: 0 auto; }
+  .sticky .cta { max-width: 540px; margin: 0 auto; }
   .consent {
-    position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 10; max-width: 520px; margin: 0 auto;
-    padding: 14px; border-radius: var(--radius); background: #221f15; border: 1px solid var(--line);
+    position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 10; max-width: 540px; margin: 0 auto;
+    padding: 14px; border-radius: var(--radius); background: var(--ink); border: 1px solid var(--line);
     font-size: 14px; display: none;
   }
   .consent.show { display: block; }
   .consent button {
     margin: 10px 8px 0 0; min-height: 40px; padding: 0 16px; border-radius: 999px; font-weight: 700;
-    border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--paper); cursor: pointer;
   }
-  .consent button.ok { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px 0; }
+  .consent button.ok { background: var(--coral); color: var(--coral-ink); border-color: var(--coral); }
+  footer { color: var(--paper-dim); font-size: 12px; text-align: center; padding: 24px 0; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 <script src="config.js"></script>
 </head>
 <body>
 <main>
-  <section class="hero">
-    <img class="avatar" id="avatar" alt="" width="84" height="84">
-    <div>
-      <p class="name" id="name"></p>
-      <p class="tag" id="tagline"></p>
-    </div>
-  </section>
+  <div class="poster"><img id="poster" alt="" fetchpriority="high"></div>
+  <div class="brand" id="brand"></div>
+  <p class="tagline" id="tagline"></p>
 
   <span class="kicker" id="kicker"></span>
   <h1 id="headline"></h1>
   <p class="sub" id="sub"></p>
 
-  <div class="player"><div id="embed"></div></div>
-  <p class="hint">Tap play for a quick listen, then follow so you don't miss the next drop.</p>
+  <div class="player" id="player"><div id="embed"></div></div>
+  <p class="hint" id="hint">Press play. If it lands, follow so the next one finds you.</p>
 
   <nav class="ctas" id="ctas" aria-label="Follow Arstream"></nav>
+  <div class="more" id="more"><p>Also on</p><div class="chips" id="chips"></div></div>
 
-  <div class="proof" id="proof">
-    <b>Why follow?</b> Following puts new Arstream releases straight into your Release Radar / feed. One tap, no sign-up here.
+  <div class="about">
+    <b>Arstream</b> is an ongoing experiment in sound and moving images, from electronic music and
+    alternative hip-hop to dancehall. Come for a song. Stay for whatever happens next.
+    <br><a id="site-link" rel="noopener">Enter the lair ↗</a>
   </div>
-  <footer>Links open the official artist pages.</footer>
+  <footer>All links open official Arstream pages.</footer>
 </main>
 
 <div class="sticky" id="sticky"></div>
 
 <div class="consent" id="consent" role="dialog" aria-label="Cookies">
-  We use cookies to measure which ads bring listeners.
+  We use cookies to see which ads bring listeners.
   <div>
     <button class="ok" id="consent-ok">OK</button>
     <button id="consent-no">No thanks</button>
@@ -132,7 +154,11 @@
     set(k, v, s) { try { (s ? sessionStorage : localStorage).setItem(k, v); } catch {} },
   };
 
-  // ---------- click ids for offline conversion upload ----------
+  // ---------- traffic source and click ids ----------
+  const src = (qs.get("utm_source") || store.get("src", true) ||
+    (/youtube\.com|youtu\.be/.test(document.referrer) ? "youtube" : "")).toLowerCase().slice(0, 40);
+  if (src) store.set("src", src, true);
+  const fromYouTube = /youtube|^yt/.test(src);
   const clickIds = {};
   for (const k of ["gclid", "wbraid", "gbraid"]) {
     const v = qs.get(k) || store.get("ck_" + k, true);
@@ -189,7 +215,9 @@
     if (kw) return { v: kw, how: "keyword" };
     if (C.api) {
       try {
-        const r = await withTimeout(fetch(C.api + "/variant?arms=" + variants.map((v) => v.id).join(",")), 700);
+        const url = C.api + "/variant?arms=" + variants.map((v) => v.id).join(",") +
+          "&src=" + encodeURIComponent(src);
+        const r = await withTimeout(fetch(url), 700);
         const { arm } = await r.json();
         if (byId[arm]) return { v: byId[arm], how: "bandit" };
       } catch {}
@@ -198,20 +226,18 @@
   }
 
   // ---------- platform order ----------
-  // Audiomack is strongest in Africa and the Caribbean diaspora; Spotify elsewhere.
-  function pickPlatformOrder() {
+  function pickPlatformOrder(variant) {
     const available = C.defaultOrder.filter((p) => C.platforms[p] && C.platforms[p].url);
-    const forced = (qs.get("p") || "").toLowerCase();
-    let first = available.includes(forced) ? forced : null;
+    const pick = (p) => (available.includes(p) ? p : null);
+    let first = pick((qs.get("p") || "").toLowerCase());
     if (!first && C.platformMode === "auto") {
-      const last = store.get("last_platform");
-      const ua = navigator.userAgent;
       const lang = (navigator.language || "").toLowerCase();
-      if (available.includes(last)) first = last;
-      else if (/youtube|ytmusic/i.test(document.referrer + " " + (qs.get("utm_source") || "")) && available.includes("youtube")) first = "youtube";
-      else if (/-(ng|gh|ke|tz|ug|za|zm|zw|cm|ci|sn)$/.test(lang) || /^Africa\//.test(tz)) first = "audiomack";
-      else if (/Android/i.test(ua) && available.includes("audiomack")) first = "audiomack";
-      else if (/iPhone|iPad|Macintosh/i.test(ua) && available.includes("spotify")) first = "spotify";
+      first =
+        pick(variant && variant.platform) ||
+        (fromYouTube ? pick("youtube") : null) ||
+        pick(store.get("last_platform")) ||
+        // Audiomack leads in West and East Africa.
+        ((/-(ng|gh|ke|tz|ug|za|zm|zw|cm|ci|sn)$/.test(lang) || /^Africa\//.test(tz)) ? pick("audiomack") : null);
     }
     return first ? [first, ...available.filter((p) => p !== first)] : available;
   }
@@ -221,14 +247,13 @@
   let previewed = false;
   const fired = new Set();
   function send(type, extra) {
-    if (C.api && variantId !== "unknown") {
-      const body = JSON.stringify(Object.assign({ arm: variantId, type }, clickIds, extra || {}));
-      try {
-        if (!navigator.sendBeacon || !navigator.sendBeacon(C.api + "/event", new Blob([body], { type: "application/json" }))) {
-          fetch(C.api + "/event", { method: "POST", body, keepalive: true, headers: { "content-type": "application/json" } }).catch(() => {});
-        }
-      } catch {}
-    }
+    if (!C.api || variantId === "unknown") return;
+    const body = JSON.stringify(Object.assign({ arm: variantId, type, src }, clickIds, extra || {}));
+    try {
+      if (!navigator.sendBeacon || !navigator.sendBeacon(C.api + "/event", new Blob([body], { type: "application/json" }))) {
+        fetch(C.api + "/event", { method: "POST", body, keepalive: true, headers: { "content-type": "application/json" } }).catch(() => {});
+      }
+    } catch {}
   }
   const VALUE = { preview_15s: 0.2, follow_click: 0.6, follow_click_after_preview: 1 };
   function conversion(type, extra) {
@@ -242,83 +267,122 @@
         transport_type: "beacon",
       });
     }
-    if (g.ga4Id) gtag("event", type, Object.assign({ variant: variantId, transport_type: "beacon" }, extra || {}));
+    if (g.ga4Id) gtag("event", type, Object.assign({ variant: variantId, src, transport_type: "beacon" }, extra || {}));
   }
 
   // ---------- render ----------
-  function renderCtas(order) {
-    const make = (p, primary) => {
-      const a = document.createElement("a");
-      a.className = "cta" + (primary ? " primary" : "");
-      a.href = C.platforms[p].url;
-      a.textContent = C.platforms[p].label;
-      a.rel = "noopener";
-      a.dataset.platform = p;
-      a.addEventListener("click", (e) => {
-        // Let modified clicks open normally; still count them.
-        const type = previewed ? "follow_click_after_preview" : "follow_click";
-        store.set("last_platform", p);
-        conversion(type, { platform: p });
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
-        e.preventDefault();
-        // Give the beacon a moment, then hand off to the app / web page.
-        setTimeout(() => { location.href = a.href; }, 250);
-      });
-      return a;
-    };
-    const nav = $("ctas");
-    nav.replaceChildren(...order.map((p, i) => make(p, i === 0)));
-    if (order.length) $("sticky").replaceChildren(make(order[0], true));
+  function link(p, cls) {
+    const a = document.createElement("a");
+    a.className = cls;
+    a.href = C.platforms[p].url;
+    a.textContent = C.platforms[p].label;
+    a.rel = "noopener";
+    a.dataset.platform = p;
+    a.addEventListener("click", (e) => {
+      const type = previewed ? "follow_click_after_preview" : "follow_click";
+      store.set("last_platform", p);
+      conversion(type, { platform: p });
+      // Let modified clicks open normally; they are still counted.
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      // Give the beacon a moment, then hand off to the app / web page.
+      setTimeout(() => { location.href = a.href; }, 250);
+    });
+    return a;
   }
-
-  function renderVariant(v) {
+  function renderCtas(order) {
+    const main = order.slice(0, 3);
+    const rest = order.slice(3);
+    $("ctas").replaceChildren(...main.map((p, i) => link(p, "cta" + (i === 0 ? " primary" : ""))));
+    $("chips").replaceChildren(...rest.map((p) => link(p, "chip")));
+    $("more").hidden = !rest.length;
+    if (main.length) $("sticky").replaceChildren(link(main[0], "cta primary"));
+  }
+  function renderText(v) {
     $("kicker").textContent = v.kicker;
     $("headline").textContent = v.headline;
     $("sub").textContent = v.sub;
   }
 
-  $("name").textContent = C.artist.name;
+  // Brand header: official wordmark with a text fallback.
+  const wm = new Image();
+  wm.alt = C.artist.name;
+  wm.onerror = () => { $("brand").innerHTML = '<span class="txt"></span>'; $("brand").firstChild.textContent = C.artist.name.toUpperCase(); };
+  wm.src = C.artist.wordmark;
+  $("brand").replaceChildren(wm);
+  $("poster").onload = () => { $("poster").parentNode.classList.add("ok"); };
+  $("poster").onerror = () => { $("poster").parentNode.style.display = "none"; };
+  $("poster").src = C.artist.poster;
   $("tagline").textContent = C.artist.tagline;
-  $("avatar").onerror = () => { $("avatar").style.visibility = "hidden"; };
-  $("avatar").src = C.artist.avatar;
-  $("avatar").alt = C.artist.name;
-  renderVariant(variants[0]);
-  renderCtas(pickPlatformOrder());
+  $("site-link").href = C.artist.site;
 
+  // ---------- preview players with listen tracking ----------
+  function onListened(ms) {
+    if (!previewed && ms >= C.previewSeconds * 1000) {
+      previewed = true;
+      conversion("preview_15s");
+      $("sticky").classList.add("show");
+    }
+  }
+  function loadScript(src) {
+    const s = document.createElement("script");
+    s.src = src; s.async = true;
+    document.body.appendChild(s);
+  }
+  function spotifyPreview(uri) {
+    window.onSpotifyIframeApiReady = (API) => {
+      API.createController($("embed"), { uri, width: "100%", height: 152 }, (ctl) => {
+        let listened = 0, lastPos = null;
+        ctl.addListener("playback_update", (e) => {
+          const { position, isPaused } = e.data;
+          if (!isPaused && lastPos !== null && position > lastPos && position - lastPos < 5000) {
+            listened += position - lastPos;
+          }
+          lastPos = position;
+          onListened(listened);
+        });
+      });
+    };
+    loadScript("https://open.spotify.com/embed/iframe-api/v1");
+  }
+  function youtubePreview(id) {
+    $("player").classList.add("video");
+    window.onYouTubeIframeAPIReady = () => {
+      let listened = 0, timer = null;
+      new YT.Player("embed", {
+        videoId: id,
+        host: "https://www.youtube-nocookie.com",
+        playerVars: { playsinline: 1, rel: 0, modestbranding: 1 },
+        events: {
+          onStateChange: (e) => {
+            clearInterval(timer);
+            if (e.data === YT.PlayerState.PLAYING) {
+              timer = setInterval(() => { listened += 1000; onListened(listened); }, 1000);
+            }
+          },
+        },
+      });
+    };
+    loadScript("https://www.youtube.com/iframe_api");
+  }
+
+  // ---------- boot ----------
+  renderText(variants[0]);
+  renderCtas(pickPlatformOrder(null));
   pickVariant().then(({ v, how }) => {
     variantId = v.id;
-    renderVariant(v);
+    renderText(v);
+    renderCtas(pickPlatformOrder(v));
+    if (v.preview && v.preview.youtube) youtubePreview(v.preview.youtube);
+    else if (v.preview && v.preview.spotify) spotifyPreview(v.preview.spotify);
     send("view", { how });
   });
 
-  // Show sticky CTA once the main buttons scroll out of view.
+  // Show the sticky CTA once the main buttons scroll out of view.
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([e]) => $("sticky").classList.toggle("show", !e.isIntersecting))
       .observe($("ctas"));
   }
-
-  // ---------- Spotify preview with listen tracking ----------
-  window.onSpotifyIframeApiReady = (IFrameAPI) => {
-    IFrameAPI.createController($("embed"), { uri: C.previewUri, width: "100%", height: 152 }, (ctl) => {
-      let listened = 0, lastPos = null;
-      ctl.addListener("playback_update", (e) => {
-        const { position, isPaused } = e.data;
-        if (!isPaused && lastPos !== null && position > lastPos && position - lastPos < 5000) {
-          listened += position - lastPos;
-        }
-        lastPos = position;
-        if (!previewed && listened >= C.previewSeconds * 1000) {
-          previewed = true;
-          conversion("preview_15s");
-          $("sticky").classList.add("show");
-        }
-      });
-    });
-  };
-  const sp = document.createElement("script");
-  sp.src = "https://open.spotify.com/embed/iframe-api/v1";
-  sp.async = true;
-  document.body.appendChild(sp);
 })();
 </script>
 </body>
